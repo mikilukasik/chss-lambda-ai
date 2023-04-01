@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
+    "watch": "tsc -w",
     "install-submodules": "git submodule update --init --recursive && git submodule foreach npm i --recursive"
   },
   "keywords": [],
