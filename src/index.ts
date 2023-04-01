@@ -1,14 +1,17 @@
-import { fen2intArray } from "./chss-module-engine/src/engine_new/transformers/fen2intArray.js";
-import { predict } from "./chss-module-engine/src/engine_new/tfHelpers/predict.js";
+import { fen2intArray } from "../chss-module-engine/src/engine_new/transformers/fen2intArray.js";
+import { predict } from "../chss-module-engine/src/engine_new/tfHelpers/predict.js";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import tf from "@tensorflow/tfjs-node";
 
 const modelPath = `tfjs_model/model.json`;
 
-let loadedModel = null;
+let loadedModel: tf.LayersModel | null = null;
 let loadFailed = false;
 
-const modelAwaiters = [];
-const modelRejectors = [];
+const modelAwaiters: ((
+  value: tf.LayersModel | PromiseLike<tf.LayersModel>
+) => void)[] = [];
+const modelRejectors: ((err: any) => void)[] = [];
 
 const getModel = async () =>
   new Promise(async (res, rej) => {
@@ -18,7 +21,7 @@ const getModel = async () =>
     modelRejectors.push(rej);
   });
 
-const modelLoadErrorCatcher = (err) => {
+const modelLoadErrorCatcher = (err: any) => {
   console.log("failed to load model.");
   console.error(err);
 
@@ -36,18 +39,28 @@ const modelLoadErrorCatcher = (err) => {
   });
 })().catch(modelLoadErrorCatcher);
 
-const hexToDec = (hex) => Number(`0x${hex}`);
-const transformLmfLmt = (lmflmtStr) => {
-  const result = [];
+const hexToDec = (hex: string) => Number(`0x${hex}`);
+const transformLmfLmt = (lmflmtStr: string) => {
+  const result: number[] = [];
   for (let i = 0; i < 128; i += 2) {
     result.push(hexToDec(lmflmtStr.substring(i, i + 2)));
   }
   return result;
 };
 
-export const handler = async (event, context) => {
+export const handler: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEvent
+) => {
   try {
-    const { fen, lmf: lmfStr, lmt: lmtStr } = event.queryStringParameters;
+    const {
+      fen,
+      lmf: lmfStr,
+      lmt: lmtStr,
+    } = event.queryStringParameters as {
+      fen: string;
+      lmf: string;
+      lmt: string;
+    };
 
     const board = fen2intArray(fen);
     const lmf = transformLmfLmt(lmfStr);
@@ -61,9 +74,10 @@ export const handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({
         winningMoveString,
+        success: true,
       }),
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error during prediction:", error);
 
     return {
