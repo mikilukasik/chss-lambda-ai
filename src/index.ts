@@ -86,7 +86,14 @@ export const handler: APIGatewayProxyHandler = async (
 
     const model = await getModel();
 
-    const { winningMoveString } = await predict({ board, lmf, lmt, model, tf });
+    const { winningMoveString } = await predict({
+      board,
+      lmf,
+      lmt,
+      model,
+      tf,
+      nextMoves,
+    });
 
     return {
       statusCode: 200,
