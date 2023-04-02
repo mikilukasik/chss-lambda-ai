@@ -1,4 +1,7 @@
 import { fen2intArray } from "../chss-module-engine/src/engine_new/transformers/fen2intArray.js";
+import { move2moveString } from "../chss-module-engine/src/engine_new/transformers/move2moveString.js";
+import { hex2toNumArr } from "../chss-module-engine/src/engine_new/transformers/hex2toNumArr.js";
+import { generateLegalMoves } from "../chss-module-engine/src/engine_new/moveGenerators/generateLegalMoves.js";
 import { predict } from "../chss-module-engine/src/engine_new/tfHelpers/predict.js";
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import tf from "@tensorflow/tfjs-node";
@@ -39,15 +42,6 @@ const modelLoadErrorCatcher = (err: any) => {
   });
 })().catch(modelLoadErrorCatcher);
 
-const hexToDec = (hex: string) => Number(`0x${hex}`);
-const transformLmfLmt = (lmflmtStr: string) => {
-  const result: number[] = [];
-  for (let i = 0; i < 128; i += 2) {
-    result.push(hexToDec(lmflmtStr.substring(i, i + 2)));
-  }
-  return result;
-};
-
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ) => {
@@ -63,8 +57,32 @@ export const handler: APIGatewayProxyHandler = async (
     };
 
     const board = fen2intArray(fen);
-    const lmf = transformLmfLmt(lmfStr);
-    const lmt = transformLmfLmt(lmtStr);
+    const nextMoves = generateLegalMoves(board);
+
+    if (!nextMoves.length) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          winningMoveString: null,
+          noValidMoves: true,
+          success: true,
+        }),
+      };
+    }
+
+    if (nextMoves.length === 1) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          winningMoveString: move2moveString(nextMoves[0]),
+          onlyMove: true,
+          success: true,
+        }),
+      };
+    }
+
+    const lmf = hex2toNumArr(lmfStr);
+    const lmt = hex2toNumArr(lmtStr);
 
     const model = await getModel();
 
