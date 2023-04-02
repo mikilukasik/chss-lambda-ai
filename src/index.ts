@@ -84,7 +84,9 @@ export const handler: APIGatewayProxyHandler = async (
     const lmf = hex2toNumArr(lmfStr);
     const lmt = hex2toNumArr(lmtStr);
 
+    const started = Date.now();
     const model = await getModel();
+    const gotModelAt = Date.now();
 
     const { winningMoveString } = await predict({
       board,
@@ -100,6 +102,8 @@ export const handler: APIGatewayProxyHandler = async (
       body: JSON.stringify({
         winningMoveString,
         success: true,
+        modelLoadTime: gotModelAt - started,
+        predictTime: Date.now() - gotModelAt,
       }),
     };
   } catch (error: any) {
