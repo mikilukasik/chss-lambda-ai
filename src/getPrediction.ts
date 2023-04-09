@@ -22,23 +22,17 @@ export const getPrediction = async ({
 
   if (!nextMoves.length) {
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        winningMoveString: null,
-        noValidMoves: true,
-        success: true,
-      }),
+      winningMoveString: null,
+      noValidMoves: true,
+      success: true,
     };
   }
 
   if (nextMoves.length === 1) {
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        winningMoveString: move2moveString(nextMoves[0]),
-        onlyMove: true,
-        success: true,
-      }),
+      winningMoveString: move2moveString(nextMoves[0]),
+      onlyMove: true,
+      success: true,
     };
   }
 
