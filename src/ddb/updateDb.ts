@@ -43,7 +43,10 @@ export const updateDb = async ({
 }: {
   update: Record<string, { add: Record<string, any>[] }>;
 }): Promise<{
-  updateResult: { UnprocessedItems: {} } | null;
+  updateResult: {
+    UnprocessedItems: {};
+    updateIds: Record<string, number>;
+  } | null;
   error?: any;
 }> => {
   const requests: BatchWriteItemRequestMap[] = [];

@@ -22,6 +22,7 @@ export const getPrediction = async ({
 
   if (!nextMoves.length) {
     return {
+      winningMove: null,
       winningMoveString: null,
       noValidMoves: true,
       success: true,
@@ -30,6 +31,7 @@ export const getPrediction = async ({
 
   if (nextMoves.length === 1) {
     return {
+      winningMove: nextMoves[0],
       winningMoveString: move2moveString(nextMoves[0]),
       onlyMove: true,
       success: true,
