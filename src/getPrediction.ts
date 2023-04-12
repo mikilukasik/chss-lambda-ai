@@ -4,6 +4,7 @@ import { generateLegalMoves } from "../chss-module-engine/src/engine_new/moveGen
 import { predict } from "../chss-module-engine/src/engine_new/tfHelpers/predict.js";
 import tf from "@tensorflow/tfjs-node";
 import { getModelGetter } from "./getModelGetter.js";
+import { getMinimaxVals } from "./getMinimaxVals.js";
 
 const modelPath = `tfjs_model/model.json`;
 const getModel = getModelGetter(modelPath);
@@ -42,7 +43,7 @@ export const getPrediction = async ({
   const model = await getModel();
   const gotModelAt = Date.now();
 
-  const prediction = await predict({
+  const modelPrediction = await predict({
     board,
     lmf,
     lmt,
@@ -51,10 +52,19 @@ export const getPrediction = async ({
     nextMoves,
   });
 
+  const minimaxVals = await getMinimaxVals({
+    modelPrediction,
+    board,
+    lmf,
+    lmt,
+    depth: 6,
+  });
+
   return {
-    ...prediction,
+    ...modelPrediction,
     success: true,
     modelLoadTime: gotModelAt - started,
     predictTime: Date.now() - gotModelAt,
+    ...minimaxVals,
   };
 };
