@@ -57,7 +57,7 @@ export const getPrediction = async ({
     board,
     lmf,
     lmt,
-    depth: 6,
+    depth: 5,
   });
 
   return {
