@@ -13,10 +13,12 @@ export const getPrediction = async ({
   fen,
   lmf,
   lmt,
+  engineConfig: { moveSorters = [], depth = 5 },
 }: {
   fen: string;
   lmf: number[];
   lmt: number[];
+  engineConfig: { moveSorters?: { cutoff?: number }[]; depth?: number };
 }) => {
   const board = fen2intArray(fen);
   const nextMoves = generateLegalMoves(board);
@@ -57,8 +59,13 @@ export const getPrediction = async ({
     board,
     lmf,
     lmt,
-    depth: 5,
+    depth,
+    moveSorters,
   });
+
+  const winningMoveIndex = modelPrediction.sortedMoves.findIndex(
+    ({ move }) => move === minimaxVals.winningMove
+  );
 
   return {
     ...modelPrediction,
@@ -66,5 +73,9 @@ export const getPrediction = async ({
     modelLoadTime: gotModelAt - started,
     predictTime: Date.now() - gotModelAt,
     ...minimaxVals,
+    winningMoveIndex,
+    winningMoveScoreRatio:
+      modelPrediction.sortedMoves[winningMoveIndex].score /
+      modelPrediction.sortedMoves[0].score,
   };
 };

@@ -6,19 +6,26 @@ export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ) => {
   try {
-    const { fen, lmf, lmt, gameId, moveIndex, dbUpdate } = JSON.parse(
-      event.body || "{}"
-    ) as {
+    const {
+      fen,
+      lmf,
+      lmt,
+      gameId,
+      moveIndex,
+      dbUpdate,
+      engineConfig = {},
+    } = JSON.parse(event.body || "{}") as {
       fen: string;
       lmf: number[];
       lmt: number[];
       gameId: string;
       moveIndex: number;
+      engineConfig: { moveSorters?: { cutoff?: number }[]; depth?: number };
       dbUpdate: Record<string, { add: Record<string, any>[] }>;
     };
 
     const [predictResponse, dbUpdateResponse] = await Promise.all([
-      getPrediction({ fen, lmf, lmt }),
+      getPrediction({ fen, lmf, lmt, engineConfig }),
       updateDb({ update: dbUpdate }),
     ]);
 
@@ -33,6 +40,8 @@ export const handler: APIGatewayProxyHandler = async (
                 index: moveIndex,
                 fen,
                 move: predictResponse.winningMove,
+                engineConfig: JSON.stringify(engineConfig),
+                predictResponse: JSON.stringify(predictResponse),
               },
             ],
           },
