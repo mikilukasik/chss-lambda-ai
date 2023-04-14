@@ -25,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async (
     };
 
     const [predictResponse, dbUpdateResponse] = await Promise.all([
-      getPrediction({ fen, lmf, lmt, engineConfig }),
+      getPrediction({ fen, lmf, lmt, engineConfig, moveIndex }),
       updateDb({ update: dbUpdate }),
     ]);
 
