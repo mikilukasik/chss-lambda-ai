@@ -6,7 +6,7 @@ export const getModelGetter = (modelPath: string) => {
   if (modelGetters[modelPath]) return modelGetters[modelPath];
 
   let loadedModel: tf.LayersModel | null = null;
-  let loadFailed = false;
+  let loadFailed: any = false;
 
   const modelAwaiters: ((
     value: tf.LayersModel | PromiseLike<tf.LayersModel>
@@ -14,17 +14,18 @@ export const getModelGetter = (modelPath: string) => {
   const modelRejectors: ((err: any) => void)[] = [];
 
   const modelLoadErrorCatcher = (err: any) => {
-    console.log("failed to load model.");
-    console.error(err);
+    const errWithStack = new Error(`Failed to load model: ${err.message}`);
+    console.error(errWithStack);
 
     loadFailed = err;
-    while (modelRejectors.length) (modelRejectors.pop() || ((_) => {}))(err);
+    while (modelRejectors.length)
+      (modelRejectors.pop() || ((_) => {}))(errWithStack);
     modelAwaiters.length = 0;
   };
 
   tf.loadLayersModel("file://" + modelPath)
     .then((model) => {
-      console.log("model loaded.");
+      console.log(`${modelPath} loaded.`);
       loadedModel = model;
       while (modelAwaiters.length) (modelAwaiters.pop() || ((_) => {}))(model);
       modelRejectors.length = 0;

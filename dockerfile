@@ -1,6 +1,6 @@
 FROM public.ecr.aws/lambda/nodejs:16
 
-ADD tfjs_model ./tfjs_model
+ADD models ./models
 ADD package.json .
 RUN npm install
 

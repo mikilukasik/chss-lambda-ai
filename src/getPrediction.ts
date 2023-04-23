@@ -1,18 +1,21 @@
 import { fen2intArray } from "../chss-module-engine/src/engine_new/transformers/fen2intArray.js";
 import { move2moveString } from "../chss-module-engine/src/engine_new/transformers/move2moveString.js";
 import { generateLegalMoves } from "../chss-module-engine/src/engine_new/moveGenerators/generateLegalMoves.js";
-import { predict } from "../chss-module-engine/src/engine_new/tfHelpers/predict.js";
+import {
+  predictMove,
+  getWinnerPredictor,
+} from "../chss-module-engine/src/engine_new/tfHelpers/predict.js";
 import tf from "@tensorflow/tfjs-node";
 import { getModelGetter } from "./getModelGetter.js";
 import { getMinimaxVals } from "./getMinimaxVals.js";
+import { EngineConfig } from "./types/EngineConfig.js";
+import { getNextBoards } from "./getNextBoards.js";
 
-type EngineConfig = {
-  moveSorters?: { cutoff?: number }[];
-  depth?: number;
-};
+const moveModelPath = `models/move_predictor/tfjs/model.json`;
+const getMoveModel = getModelGetter(moveModelPath);
 
-const modelPath = `tfjs_model/model.json`;
-const getModel = getModelGetter(modelPath);
+const winnerModelPath = `models/winner_predictor/model.json`;
+const getWinnerModel = getModelGetter(winnerModelPath);
 
 const MIN_DEPTH = 3;
 const MAX_DEPTH = 6;
@@ -43,11 +46,27 @@ export const getPrediction = async ({
   moveIndex: number;
   engineConfig: EngineConfig;
 }) => {
-  const { moveSorters = [], depth = 5 } = engineConfig;
+  const {
+    moveSorters = [],
+    depth = 5,
+    moveScoreRario = 2.5,
+    winnerScoreRario = 1,
+  } = engineConfig;
+
+  const started = Date.now();
 
   const actualDepth = getActualDepth({ engineConfig, moveIndex });
   const board = fen2intArray(fen);
   const nextMoves = generateLegalMoves(board);
+
+  const winnerModel = await getWinnerModel();
+  const winnerPredictor = getWinnerPredictor({ tf, model: winnerModel });
+
+  const { winnerValue: originalWinningValue } = await winnerPredictor({
+    board,
+    lmf,
+    lmt,
+  });
 
   if (!nextMoves.length) {
     return {
@@ -55,6 +74,7 @@ export const getPrediction = async ({
       winningMoveString: null,
       noValidMoves: true,
       success: true,
+      originalWinningValue,
     };
   }
 
@@ -64,20 +84,26 @@ export const getPrediction = async ({
       winningMoveString: move2moveString(nextMoves[0]),
       onlyMove: true,
       success: true,
+      originalWinningValue,
     };
   }
 
-  const started = Date.now();
-  const model = await getModel();
-  const gotModelAt = Date.now();
+  const moveModel = await getMoveModel();
 
-  const modelPrediction = await predict({
+  const gotModelsAt = Date.now();
+
+  const nextBoards = getNextBoards({ board, lmf, lmt, nextMoves });
+
+  const modelPrediction = await predictMove({
     board,
     lmf,
     lmt,
-    model,
+    moveModel,
+    winnerModel,
     tf,
-    nextMoves,
+    nextBoards,
+    moveScoreRario,
+    winnerScoreRario,
   });
 
   const gotModelPredictionAt = Date.now();
@@ -98,8 +124,8 @@ export const getPrediction = async ({
   return {
     ...modelPrediction,
     success: true,
-    modelLoadTime: gotModelAt - started,
-    modelPredictTime: gotModelPredictionAt - gotModelAt,
+    modelLoadTime: gotModelsAt - started,
+    modelPredictTime: gotModelPredictionAt - gotModelsAt,
     minimaxTime: Date.now() - gotModelPredictionAt,
     ...minimaxVals,
     winningMoveIndex,
@@ -108,5 +134,6 @@ export const getPrediction = async ({
       modelPrediction.sortedMoves[0].score,
     depth,
     actualDepth,
+    originalWinningValue,
   };
 };

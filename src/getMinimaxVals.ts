@@ -1,7 +1,7 @@
 import { getMovedBoard } from "../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
 import { getUpdatedLmfLmt } from "../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
 import { minimax } from "../chss-module-engine/src/engine_new/minimax/minimaxTopLevelNoWasm.js";
-import { getDeepMoveSorters } from "./getDeepMoveSorters.js";
+import { EngineConfig } from "./types/EngineConfig.js";
 
 export const getMinimaxVals = async ({
   modelPrediction: { sortedMoves: _sortedMoves },
@@ -26,13 +26,12 @@ export const getMinimaxVals = async ({
   let winningMoveString;
   let value = board[64] ? -999999 : 999999;
 
-  const deepMoveSorters = await getDeepMoveSorters(moveSorters.slice(1));
-
   let sortedMoves = _sortedMoves;
-  if (moveSorters[0].cutoff) {
-    const cutoffValue = sortedMoves[0].score * moveSorters[0].cutoff;
-    sortedMoves = sortedMoves.filter((sm) => sm.score > cutoffValue);
-  }
+  // if (moveSorters[0].cutoff) {
+  //   const cutoffValue = sortedMoves[0].score * moveSorters[0].cutoff;
+  //   console.log({ sortedMoves, cutoffValue });
+  //   sortedMoves = sortedMoves.filter((sm) => sm.score > cutoffValue);
+  // }
 
   for (const { move, moveString, score } of sortedMoves) {
     const movedBoard = getMovedBoard(move, board);
@@ -44,7 +43,6 @@ export const getMinimaxVals = async ({
       board[64] ? value : -999999,
       board[64] ? 999999 : value,
       board[64] ? score : -score,
-      deepMoveSorters,
       nextLm.lmf,
       nextLm.lmt,
       false // todo: wantsToDraw
