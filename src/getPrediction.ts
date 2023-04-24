@@ -20,6 +20,9 @@ const getWinnerModel = getModelGetter(winnerModelPath);
 const MIN_DEPTH = 3;
 const MAX_DEPTH = 6;
 const OPENING_MAX_DEPTH = 4;
+const DEFAULT_DEPTH = 5;
+const DEFAULT_MOVE_SCORE_RATIO = 4;
+const DEFAULT_WINNER_SCORE_RATIO = 1;
 
 const getActualDepth = ({
   engineConfig: { depth = 5 },
@@ -49,8 +52,8 @@ export const getPrediction = async ({
   const {
     moveSorters = [],
     depth = 5,
-    moveScoreRario = 2.5,
-    winnerScoreRario = 1,
+    moveScoreRario = DEFAULT_MOVE_SCORE_RATIO,
+    winnerScoreRario = DEFAULT_WINNER_SCORE_RATIO,
   } = engineConfig;
 
   const started = Date.now();
