@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { getPrediction } from "./getPrediction.js";
 import { updateDb } from "./ddb/updateDb.js";
+import os from "os";
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
@@ -54,6 +55,7 @@ export const handler: APIGatewayProxyHandler = async (
           ...predictResponse,
           ...dbUpdateResponse,
           moveUpdateId: moveUpdateResponse.updateResult?.updateIds.fens,
+          cpus: os.cpus().length,
         }),
       };
     }
