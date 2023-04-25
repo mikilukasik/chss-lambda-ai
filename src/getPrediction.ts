@@ -14,7 +14,7 @@ import { getNextBoards } from "./getNextBoards.js";
 const moveModelPath = `models/move_predictor/tfjs/model.json`;
 const getMoveModel = getModelGetter(moveModelPath);
 
-const winnerModelPath = `models/winner_predictor/model.json`;
+const winnerModelPath = `models/winner_predictor/tfjs/model.json`;
 const getWinnerModel = getModelGetter(winnerModelPath);
 
 const MIN_DEPTH = 3;
