@@ -1,0 +1,10 @@
+models/move_predictor/tfjs/group1-shard1of6.bin
+models/move_predictor/tfjs/group1-shard2of6.bin
+models/move_predictor/tfjs/group1-shard3of6.bin
+models/move_predictor/tfjs/group1-shard4of6.bin
+models/move_predictor/tfjs/group1-shard5of6.bin
+models/move_predictor/tfjs/group1-shard6of6.bin
+models/winner_predictor/tfjs/group1-shard1of4.bin
+models/winner_predictor/tfjs/group1-shard2of4.bin
+models/winner_predictor/tfjs/group1-shard3of4.bin
+models/winner_predictor/tfjs/group1-shard4of4.bin
