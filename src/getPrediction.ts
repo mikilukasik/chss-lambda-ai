@@ -22,10 +22,10 @@ const MAX_DEPTH = 6;
 const OPENING_MAX_DEPTH = 4;
 const DEFAULT_DEPTH = 5;
 const DEFAULT_MOVE_SCORE_RATIO = 4;
-const DEFAULT_WINNER_SCORE_RATIO = 1;
+const DEFAULT_WINNER_SCORE_RATIO = 0.3;
 
 const getActualDepth = ({
-  engineConfig: { depth = 5 },
+  engineConfig: { depth = DEFAULT_DEPTH },
   moveIndex,
 }: {
   engineConfig: EngineConfig;
