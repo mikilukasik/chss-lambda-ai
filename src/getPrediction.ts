@@ -17,7 +17,7 @@ const getMoveModel = getModelGetter(moveModelPath);
 const winnerModelPath = `models/winner_predictor/tfjs/model.json`;
 const getWinnerModel = getModelGetter(winnerModelPath);
 
-const MIN_DEPTH = 3;
+const MIN_DEPTH = 0;
 const MAX_DEPTH = 6;
 const OPENING_MAX_DEPTH = 4;
 const DEFAULT_DEPTH = 5;
@@ -110,6 +110,18 @@ export const getPrediction = async ({
   });
 
   const gotModelPredictionAt = Date.now();
+
+  if (actualDepth === 0) {
+    return {
+      ...modelPrediction,
+      success: true,
+      modelLoadTime: gotModelsAt - started,
+      modelPredictTime: gotModelPredictionAt - gotModelsAt,
+      depth,
+      actualDepth,
+      originalWinningValue,
+    };
+  }
 
   const minimaxVals = await getMinimaxVals({
     modelPrediction,
