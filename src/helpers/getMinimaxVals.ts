@@ -1,7 +1,7 @@
-import { getMovedBoard } from "../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
-import { getUpdatedLmfLmt } from "../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
-import { minimax } from "../chss-module-engine/src/engine_new/minimax/minimaxTopLevelNoWasm.js";
-import { EngineConfig } from "./types/EngineConfig.js";
+import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
+import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
+import { minimax } from "../../chss-module-engine/src/engine_new/minimax/minimaxTopLevelNoWasm.js";
+// import { EngineConfig } from "../types/EngineConfig.js";
 
 export const getMinimaxVals = async ({
   modelPrediction: { sortedMoves: _sortedMoves },

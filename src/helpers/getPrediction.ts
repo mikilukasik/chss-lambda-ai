@@ -1,14 +1,14 @@
-import { fen2intArray } from "../chss-module-engine/src/engine_new/transformers/fen2intArray.js";
-import { move2moveString } from "../chss-module-engine/src/engine_new/transformers/move2moveString.js";
-import { generateLegalMoves } from "../chss-module-engine/src/engine_new/moveGenerators/generateLegalMoves.js";
+import { fen2intArray } from "../../chss-module-engine/src/engine_new/transformers/fen2intArray.js";
+import { move2moveString } from "../../chss-module-engine/src/engine_new/transformers/move2moveString.js";
+import { generateLegalMoves } from "../../chss-module-engine/src/engine_new/moveGenerators/generateLegalMoves.js";
 import {
   predictMove,
   getWinnerPredictor,
-} from "../chss-module-engine/src/engine_new/tfHelpers/predict.js";
+} from "../../chss-module-engine/src/engine_new/tfHelpers/predict.js";
 import tf from "@tensorflow/tfjs-node";
 import { getModelGetter } from "./getModelGetter.js";
 import { getMinimaxVals } from "./getMinimaxVals.js";
-import { EngineConfig } from "./types/EngineConfig.js";
+import { EngineConfig } from "../types/EngineConfig.js";
 import { getNextBoards } from "./getNextBoards.js";
 
 const moveModelPath = `models/move_predictor/tfjs/model.json`;
