@@ -1,16 +1,19 @@
 import { getPrediction } from "../helpers/getPrediction.js";
 import { updateDb } from "../ddb/updateDb.js";
 import os from "os";
+import { EngineConfig } from "../types/EngineConfig.js";
 
-export const getMoveHandler = async (data: {
+export type GetMovePayload = {
   fen: string;
   lmf: number[];
   lmt: number[];
   gameId: string;
   moveIndex: number;
-  engineConfig: { moveSorters?: { cutoff?: number }[]; depth?: number };
+  engineConfig: EngineConfig;
   dbUpdate: Record<string, { add: Record<string, any>[] }>;
-}) => {
+};
+
+export const getMoveHandler = async (data: GetMovePayload) => {
   try {
     const {
       fen,

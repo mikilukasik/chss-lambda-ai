@@ -1,27 +1,38 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import { getMoveHandler } from "./handlers/getMoveHandler.js";
+import { GetMovePayload, getMoveHandler } from "./handlers/getMoveHandler.js";
+import {
+  PlayFullGamePayload,
+  playFullGameHandler,
+} from "./handlers/playFullGameHandler.js";
 
 const handlers = {
   getMove: getMoveHandler,
+  playFullGame: playFullGameHandler,
 };
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ) => {
-  const { command, data } = JSON.parse(event.body || "{}") as {
-    command: "getMove";
-    data: {
-      fen: string;
-      lmf: number[];
-      lmt: number[];
-      gameId: string;
-      moveIndex: number;
-      engineConfig: { moveSorters?: { cutoff?: number }[]; depth?: number };
-      dbUpdate: Record<string, { add: Record<string, any>[] }>;
+  try {
+    const { command, data } = JSON.parse(event.body || "{}") as
+      | {
+          command: "getMove";
+          data: GetMovePayload;
+        }
+      | {
+          command: "playFullGame";
+          data: PlayFullGamePayload;
+        };
+
+    const response = await handlers[command](data as any);
+
+    return response;
+  } catch (e: any) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: `An error occurred while making a prediction: ${e.message}`,
+      }),
     };
-  };
-
-  const response = await handlers[command](data);
-
-  return response;
+  }
 };
