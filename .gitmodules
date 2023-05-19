@@ -1,3 +1,6 @@
 [submodule "chss-module-engine"]
 	path = chss-module-engine
 	url = git@github.com:mikilukasik/chss-module-engine.git
+[submodule "chss-shared"]
+	path = chss-shared
+	url = git@github.com:mikilukasik/chss-shared.git

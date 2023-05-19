@@ -1,7 +1,4 @@
-import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
-import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
-import { minimax } from "../../chss-module-engine/src/engine_new/minimax/minimaxTopLevelNoWasm.js";
-// import { EngineConfig } from "../types/EngineConfig.js";
+import { minimaxWorkerPool } from "../workers/getMinimaxWorkerPool.js";
 
 export const getMinimaxVals = async ({
   modelPrediction: { sortedMoves: _sortedMoves },
@@ -33,27 +30,29 @@ export const getMinimaxVals = async ({
   //   sortedMoves = sortedMoves.filter((sm) => sm.score > cutoffValue);
   // }
 
-  for (const { move, moveString, score } of sortedMoves) {
-    const movedBoard = getMovedBoard(move, board);
-    const nextLm = getUpdatedLmfLmt({ move, lmf, lmt });
+  const minimaxPayloads = sortedMoves.map((sm) => ({
+    ...sm,
+    value,
+    board,
+    lmf,
+    lmt,
+    depth,
+  }));
 
-    const nmVal = await minimax(
-      movedBoard,
-      depth - 1,
-      board[64] ? value : -999999,
-      board[64] ? 999999 : value,
-      board[64] ? score : -score,
-      nextLm.lmf,
-      nextLm.lmt,
-      false // todo: wantsToDraw
-    );
+  const workerPromises = minimaxPayloads.map((payload) =>
+    minimaxWorkerPool
+      .doOnAvailable("minimax", payload)
+      .then((nmVal: number) => {
+        if ((board[64] && nmVal > value) || (!board[64] && nmVal < value)) {
+          value = nmVal;
+          minimaxPayloads.forEach((mp) => (mp.value = nmVal));
+          winningMove = payload.move;
+          winningMoveString = payload.moveString;
+        }
+      })
+  );
 
-    if ((board[64] && nmVal > value) || (!board[64] && nmVal < value)) {
-      value = nmVal;
-      winningMove = move;
-      winningMoveString = moveString;
-    }
-  }
+  await Promise.all(workerPromises);
 
   return { value, winningMove, winningMoveString };
 };
