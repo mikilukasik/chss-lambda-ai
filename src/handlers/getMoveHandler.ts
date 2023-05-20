@@ -1,7 +1,7 @@
-import { getPrediction } from "../helpers/getPrediction.js";
-import { updateDb } from "../ddb/updateDb.js";
+import { getPrediction } from "../helpers/getPrediction";
+import { updateDb } from "../ddb/updateDb";
 import os from "os";
-import { EngineConfig } from "../types/EngineConfig.js";
+import { EngineConfig } from "../types/EngineConfig";
 
 export type GetMovePayload = {
   fen: string;

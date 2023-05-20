@@ -1,15 +1,31 @@
 import { parentPort } from "worker_threads";
-import { WorkerApi } from "../../chss-shared/workerApi/workerApi.js";
+import { WorkerApi } from "../../chss-shared/workerApi/workerApi";
 
-import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
-import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
-import { minimax } from "../../chss-module-engine/src/engine_new/minimax/minimaxTopLevelNoWasm.js";
+import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard";
+import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt";
+import { minimax } from "../../chss-module-engine/src/engine_new/minimax/minimaxTopLevelNoWasm";
 
 const workerApi = new WorkerApi({ parentPort });
 
 workerApi.on(
   "minimax",
-  async ({ move, board, lmf, lmt, depth, value, score }) => {
+  async ({
+    move,
+    board,
+    lmf,
+    lmt,
+    depth,
+    value,
+    score,
+  }: {
+    move: number;
+    board: Uint8Array;
+    lmf: number[];
+    lmt: number[];
+    depth: number;
+    value: number;
+    score: number;
+  }) => {
     const movedBoard = getMovedBoard(move, board);
     const nextLm = getUpdatedLmfLmt({ move, lmf, lmt });
 

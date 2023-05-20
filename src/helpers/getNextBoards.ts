@@ -1,5 +1,5 @@
-import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
-import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
+import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard";
+import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt";
 
 export const getNextBoards = ({
   board,

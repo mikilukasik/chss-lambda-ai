@@ -1,12 +1,12 @@
-import { getPrediction } from "../helpers/getPrediction.js";
-import { EngineConfig } from "../types/EngineConfig.js";
+import { getPrediction } from "../helpers/getPrediction";
+import { EngineConfig } from "../types/EngineConfig";
 
-import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard.js";
-import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js";
-import { board2fen } from "../../chss-module-engine/src/engine_new/transformers/board2fen.js";
-import { fen2intArray } from "../../chss-module-engine/src/engine_new/transformers/fen2intArray.js";
-import { isCheck } from "../../chss-module-engine/src/engine_new/utils/isCheck.js";
-import { getBoardPieceBalance } from "../../chss-module-engine/src/engine_new/utils/getBoardPieceBalance.js";
+import { getMovedBoard } from "../../chss-module-engine/src/engine_new/utils/getMovedBoard";
+import { getUpdatedLmfLmt } from "../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt";
+import { board2fen } from "../../chss-module-engine/src/engine_new/transformers/board2fen";
+import { fen2intArray } from "../../chss-module-engine/src/engine_new/transformers/fen2intArray";
+import { isCheck } from "../../chss-module-engine/src/engine_new/utils/isCheck";
+import { getBoardPieceBalance } from "../../chss-module-engine/src/engine_new/utils/getBoardPieceBalance";
 
 const MAX_MOVES_WITH_NO_HIT_OR_PAWN_MOVE = 50;
 

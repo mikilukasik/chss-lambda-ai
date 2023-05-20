@@ -1,7 +1,7 @@
 import AWS from "aws-sdk";
-import { BatchWriteItemRequestMap } from "aws-sdk/clients/dynamodb.js";
-import { checkAndCreateTables } from "./createTables.js";
-import { getNextUpdateId } from "./getNextUpdateId.js";
+import { BatchWriteItemRequestMap } from "aws-sdk/clients/dynamodb";
+import { checkAndCreateTables } from "./createTables";
+import { getNextUpdateId } from "./getNextUpdateId";
 
 const MAX_BATCH_SIZE = 25;
 

@@ -1,9 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
-import { GetMovePayload, getMoveHandler } from "./handlers/getMoveHandler.js";
+import { GetMovePayload, getMoveHandler } from "./handlers/getMoveHandler";
 import {
   PlayFullGamePayload,
   playFullGameHandler,
-} from "./handlers/playFullGameHandler.js";
+} from "./handlers/playFullGameHandler";
 
 const handlers = {
   getMove: getMoveHandler,

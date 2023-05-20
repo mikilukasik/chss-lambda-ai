@@ -7,4 +7,4 @@ ADD models ./models
 ADD chss-module-engine ./chss-module-engine
 ADD dist ./dist
 
-CMD [ "dist/index.handler" ]
+CMD [ "dist/src/index.handler" ]

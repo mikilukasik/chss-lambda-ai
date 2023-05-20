@@ -1,4 +1,4 @@
-import { minimaxWorkerPool } from "../workers/getMinimaxWorkerPool.js";
+import { minimaxWorkerPool } from "../workers/getMinimaxWorkerPool";
 
 export const getMinimaxVals = async ({
   modelPrediction: { sortedMoves: _sortedMoves },

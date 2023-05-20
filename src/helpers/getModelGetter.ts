@@ -1,6 +1,6 @@
-import tf, { LayersModel } from "@tensorflow/tfjs-node";
+import * as tf from "@tensorflow/tfjs-node";
 
-const modelGetters: { [key: string]: () => Promise<LayersModel> } = {};
+const modelGetters: { [key: string]: () => Promise<tf.LayersModel> } = {};
 
 export const getModelGetter = (modelPath: string) => {
   if (modelGetters[modelPath]) return modelGetters[modelPath];
