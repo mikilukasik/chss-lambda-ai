@@ -1,6 +1,7 @@
 export type EngineConfig = {
   moveSorters?: { cutoff?: number }[];
-  depth?: number;
+  timeout?: number;
+  maxDepth?: number;
   moveScoreRario?: number;
   winnerScoreRario?: number;
 };

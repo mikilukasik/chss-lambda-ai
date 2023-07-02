@@ -7,6 +7,7 @@ export const getMinimaxVals = async ({
   depth = 5,
   lmf,
   lmt,
+  timedOutFlag = { timedOut: false },
 }: {
   modelPrediction: {
     winningMoveString: string;
@@ -18,9 +19,12 @@ export const getMinimaxVals = async ({
   depth?: number;
   lmf: number[];
   lmt: number[];
+  timedOutFlag?: { timedOut: boolean };
 }) => {
-  let winningMove;
-  let winningMoveString;
+  // console.log(`running depth ${depth}`);
+
+  let winningMove: number;
+  let winningMoveString: string;
   let value = board[64] ? -999999 : 999999;
 
   let sortedMoves = _sortedMoves;
@@ -37,6 +41,7 @@ export const getMinimaxVals = async ({
     lmf,
     lmt,
     depth,
+    timedOutFlag,
   }));
 
   const workerPromises = minimaxPayloads.map((payload) =>
@@ -54,5 +59,10 @@ export const getMinimaxVals = async ({
 
   await Promise.all(workerPromises);
 
-  return { value, winningMove, winningMoveString };
+  return {
+    value: value!,
+    winningMove: winningMove!,
+    winningMoveString: winningMoveString!,
+    depth,
+  };
 };

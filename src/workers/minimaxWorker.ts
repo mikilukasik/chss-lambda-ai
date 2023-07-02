@@ -17,6 +17,7 @@ workerApi.on(
     depth,
     value,
     score,
+    timedOutFlag = { timedOut: false },
   }: {
     move: number;
     board: Uint8Array;
@@ -25,7 +26,10 @@ workerApi.on(
     depth: number;
     value: number;
     score: number;
+    timedOutFlag?: { timedOut: boolean };
   }) => {
+    if (timedOutFlag.timedOut) return;
+
     const movedBoard = getMovedBoard(move, board);
     const nextLm = getUpdatedLmfLmt({ move, lmf, lmt });
 
