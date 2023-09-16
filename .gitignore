@@ -1,3 +1,4 @@
 node_modules
 chss-module-engine
 dist
+.DS_Store
