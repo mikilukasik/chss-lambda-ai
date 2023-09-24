@@ -1,10 +1,7 @@
 import { fen2intArray } from "../../chss-module-engine/src/engine_new/transformers/fen2intArray";
 import { move2moveString } from "../../chss-module-engine/src/engine_new/transformers/move2moveString";
 import { generateLegalMoves } from "../../chss-module-engine/src/engine_new/moveGenerators/generateLegalMoves";
-import {
-  predictMove,
-  // getWinnerPredictor,
-} from "../../chss-module-engine/src/engine_new/tfHelpers/predict";
+import { predictMove } from "../../chss-module-engine/src/engine_new/tfHelpers/predict";
 import * as tf from "@tensorflow/tfjs-node";
 import { getModelGetter } from "./getModelGetter";
 import { getMultiDepthMinimaxVals } from "./getMultiDepthMinimaxVals";
@@ -14,14 +11,9 @@ import { getNextBoards } from "./getNextBoards";
 const moveModelPath = `models/move_predictor/tfjs/model.json`;
 const getMoveModel = getModelGetter(moveModelPath);
 
-// const winnerModelPath = `models/winner_predictor/tfjs/model.json`;
-// const getWinnerModel = getModelGetter(winnerModelPath);
-
-const MIN_DEPTH = 0;
 const DEFAULT_MAX_DEPTH = 15;
 const DEFAULT_TIMEOUT = 3000;
 const DEFAULT_MOVE_SCORE_RATIO = 4;
-const DEFAULT_WINNER_SCORE_RATIO = 0.3;
 
 export const getPrediction = async ({
   fen,
@@ -40,7 +32,6 @@ export const getPrediction = async ({
     maxDepth = DEFAULT_MAX_DEPTH,
     timeout = DEFAULT_TIMEOUT,
     moveScoreRario = DEFAULT_MOVE_SCORE_RATIO,
-    winnerScoreRario = DEFAULT_WINNER_SCORE_RATIO,
   } = engineConfig;
 
   const started = Date.now();
@@ -48,22 +39,12 @@ export const getPrediction = async ({
   const board = fen2intArray(fen);
   const nextMoves = generateLegalMoves(board);
 
-  // const winnerModel = await getWinnerModel();
-  // const winnerPredictor = getWinnerPredictor({ tf, model: winnerModel });
-
-  // const { winnerValue: originalWinningValue } = await winnerPredictor({
-  //   board,
-  //   lmf,
-  //   lmt,
-  // });
-
   if (!nextMoves.length) {
     return {
       winningMove: null,
       winningMoveString: null,
       noValidMoves: true,
       success: true,
-      // originalWinningValue,
     };
   }
 
@@ -73,7 +54,6 @@ export const getPrediction = async ({
       winningMoveString: move2moveString(nextMoves[0]),
       onlyMove: true,
       success: true,
-      // originalWinningValue,
     };
   }
 
@@ -88,11 +68,9 @@ export const getPrediction = async ({
     lmf,
     lmt,
     moveModel,
-    // winnerModel,
     tf,
     nextBoards,
     moveScoreRario,
-    // winnerScoreRario,
   });
 
   const gotModelPredictionAt = Date.now();
@@ -105,7 +83,6 @@ export const getPrediction = async ({
       modelPredictTime: gotModelPredictionAt - gotModelsAt,
       depth: 0,
       maxDepth,
-      // originalWinningValue,
     };
   }
 
@@ -136,6 +113,5 @@ export const getPrediction = async ({
       modelPrediction.sortedMoves[winningMoveIndex].score /
       modelPrediction.sortedMoves[0].score,
     maxDepth,
-    // originalWinningValue,
   };
 };

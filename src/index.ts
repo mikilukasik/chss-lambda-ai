@@ -10,23 +10,36 @@ const handlers = {
   playFullGame: playFullGameHandler,
 };
 
+const getResponse = async ({
+  command,
+  data,
+}:
+  | {
+      command: "getMove";
+      data: GetMovePayload;
+    }
+  | {
+      command: "playFullGame";
+      data: PlayFullGamePayload;
+    }) => handlers[command](data as any);
+
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ) => {
   try {
-    const { command, data } = JSON.parse(event.body || "{}") as
-      | {
-          command: "getMove";
-          data: GetMovePayload;
-        }
-      | {
-          command: "playFullGame";
-          data: PlayFullGamePayload;
-        };
+    const payload = JSON.parse(event.body || "{}");
 
-    const response = await handlers[command](data as any);
+    if (Array.isArray(payload)) {
+      const promises = payload.map((p) => getResponse(p));
+      const responses = await Promise.all(promises);
 
-    return response;
+      return {
+        statusCode: 200,
+        body: JSON.stringify(responses),
+      };
+    }
+
+    return getResponse(payload);
   } catch (e: any) {
     return {
       statusCode: 500,
